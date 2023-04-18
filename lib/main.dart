@@ -54,17 +54,12 @@ final _router = GoRouter(
 );
 
 extension ValidUrl on String {
-  bool isValidUrl() =>
+  bool get isUrl =>
       Uri
           .tryParse(this)
           ?.hasAbsolutePath ?? false;
 }
-extension Enumerate<T> on List<T> {
-  List<({int index, T item})> enumerate() {
-    return List.generate(
-        length, (index) => (index: index, item: this[index]));
-  }
-}
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

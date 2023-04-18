@@ -21,8 +21,8 @@ enum Filter {
 
 final filterProvider = StateProvider((ref) => Filter.none);
 
-final filteredProductsProvider = Provider<
-    List<({Product product, bool liked})>>((ref) {
+final filteredProductsProvider =
+    Provider<List<({Product product, bool liked})>>((ref) {
   final filter = ref.watch(filterProvider);
   final products = ref.watch(productsProvider);
 
@@ -46,12 +46,9 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
           PopupMenuButton<Filter>(
             initialValue: ref.read(filterProvider),
             onSelected: (Filter f) {
-              ref
-                  .read(filterProvider.notifier)
-                  .state = f;
+              ref.read(filterProvider.notifier).state = f;
             },
-            itemBuilder: (BuildContext context) =>
-            <PopupMenuEntry<Filter>>[
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<Filter>>[
               const PopupMenuItem<Filter>(
                 value: Filter.none,
                 child: Text('All'),
@@ -80,63 +77,65 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
         crossAxisCount: 2,
-        children: [
-          for (final indexedProduct in products.enumerate())
-            GestureDetector(
-              onTap: () {
-                GoRouter.of(context).pushNamed(
-                  'details',
-                  params: {
-                    "index": indexedProduct.index.toString(),
-                  },
-                );
-              },
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                child: GridTile(
-                  footer: GridTileBar(
-                    leading: IconButton(
-                      onPressed: () {
-                        ref
-                            .read(productsProvider.notifier)
-                            .toggleLiked(indexedProduct.index);
-                      },
-                      icon: Icon(indexedProduct.item.liked
-                          ? Icons.favorite
-                          : Icons.favorite_border),
-                    ),
-                    backgroundColor: Colors.black38,
-                    title: Text(indexedProduct.item.product.title),
-                    trailing: IconButton(
-                      onPressed: () {
-                        ref.read(currentOrderProvider.notifier).add(
-                            indexedProduct.item.product, 1);
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("${indexedProduct.item.product
-                                .title} added"),
-                            action: SnackBarAction(
-                              label: "Undo",
-                              onPressed: () {
-                                ref.read(currentOrderProvider.notifier).remove(
-                                    indexedProduct.item.product, 1);
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.shopping_cart),
-                    ),
+        children: List.generate(
+          products.length,
+          (i) => GestureDetector(
+            onTap: () {
+              GoRouter.of(context).pushNamed(
+                'details',
+                params: {
+                  "index": i.toString(),
+                },
+              );
+            },
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+              child: GridTile(
+                footer: GridTileBar(
+                  leading: IconButton(
+                    onPressed: () {
+                      ref
+                          .read(productsProvider.notifier)
+                          .toggleLiked(i);
+                    },
+                    icon: Icon(products[i].liked
+                        ? Icons.favorite
+                        : Icons.favorite_border),
                   ),
-                  child: CachedNetworkImage(
-                    imageUrl: indexedProduct.item.product.imgUrl,
-                    fit: BoxFit.cover,
+                  backgroundColor: Colors.black38,
+                  title: Text(products[i].product.title),
+                  trailing: IconButton(
+                    onPressed: () {
+                      ref
+                          .read(currentOrderProvider.notifier)
+                          .add(products[i].product, 1);
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              "${products[i].product.title} added"),
+                          action: SnackBarAction(
+                            label: "Undo",
+                            onPressed: () {
+                              ref
+                                  .read(currentOrderProvider.notifier)
+                                  .remove(products[i].product, 1);
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.shopping_cart),
                   ),
                 ),
+                child: CachedNetworkImage(
+                  imageUrl: products[i].product.imgUrl,
+                  fit: BoxFit.cover,
+                ),
               ),
-            )
-        ],
+            ),
+          ),
+        ),
       ),
     );
   }

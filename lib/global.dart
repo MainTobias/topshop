@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -23,12 +22,19 @@ class ProductsNotifier
   List<({Product product, bool liked})> products) : super(products);
 
   void addProduct(Product product) {
+  if (contains(product)) {
+  throw Exception("Product already catalogued.");
+  }
   state = [...state, (product: product, liked: false)];
   }
 
   void removeProduct(int index) {
   state.removeAt(index);
   state = [...state];
+  }
+
+  bool contains(Product product) {
+  return state.map((e) => e.product).contains(product);
   }
 
   void setProduct(int index, Product update) {
@@ -130,7 +136,7 @@ final ordersProvider = StateProvider<
   (order : {
     book: 5,
     mouse: 3,
-  }, orderedAt: DateTime.now(),),
+  }, orderedAt: DateTime.now(), ),
   (order : {
     book: 5,
     mouse: 3,
