@@ -28,34 +28,9 @@ class ProductDetailsScreen extends ConsumerWidget {
           children: [
             LimitedBox(
               maxHeight: MediaQuery.of(context).size.height * 0.3,
-              child: RepaintBoundary(
-                child: Stack(
-                  children: <Widget>[
-                    GestureDetector(
-                      onPanUpdate: (DragUpdateDetails details) {
-                        ref.read(magLocationProvider.notifier).state =
-                            details.localPosition;
-                      },
-                      child: CachedNetworkImage(
-                        imageUrl: product.imgUrl,
-                      ),
-                    ),
-                    Positioned(
-                      left: offset.dx,
-                      top: offset.dy,
-                      child: RawMagnifier(
-                        decoration: MagnifierDecoration(
-                          shape: CircleBorder(
-                            side: BorderSide(
-                                color: Theme.of(context).indicatorColor,
-                                width: 3),
-                          ),
-                        ),
-                        size: Size(magDiagonal, magDiagonal),
-                        magnificationScale: 2,
-                      ),
-                    )
-                  ],
+              child: InteractiveViewer(
+                child: CachedNetworkImage(
+                  imageUrl: product.imgUrl,
                 ),
               ),
             ),
